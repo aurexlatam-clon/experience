@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>AUREX</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+<style>
+:root { --gold:#D4A843; --lime:#A8E63D; --green:#25D366; --black:#000; }
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:var(--black); font-family:'Inter',sans-serif; overflow:hidden; }
+
+/* TRANSICIONES */
+.p {
+  opacity: 1;
+  transition: opacity 0.4s ease;
+}
+.p.saliendo {
+  opacity: 0;
+}
+.p.entrando {
+  opacity: 0;
+  animation: fadeIn 0.4s ease forwards;
+}
+@keyframes fadeIn {
+  from { opacity:0; }
+  to { opacity:1; }
+}
+
+.p { display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; flex-direction:column; justify-content:center; align-items:center; background:var(--black); }
+.p.on { display:flex; }
+
+/* P0 */
+#p0 { overflow:hidden; }
+#p0::before { content:''; position:absolute; top:-50%; left:-50%; width:200%; height:200%; background:radial-gradient(ellipse at 20% 50%,rgba(168,230,61,0.05) 0%,transparent 50%),radial-gradient(ellipse at 80% 20%,rgba(212,168,67,0.07) 0%,transparent 40%); animation:rotar 20s linear infinite; pointer-events:none; }
+@keyframes rotar { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
+#p0::after { content:''; position:absolute; left:20px; top:15%; bottom:15%; width:1px; background:linear-gradient(to bottom,transparent,rgba(168,230,61,0.5) 30%,rgba(212,168,67,0.5) 70%,transparent); }
+.p0-inner { position:relative; z-index:2; display:flex; flex-direction:column; align-items:center; padding:0 28px; width:100%; max-width:420px; }
+.p0-logo { width:160px; margin-bottom:32px; animation:fadeUp 0.8s ease 0.2s both; }
+.p0-linea { width:40px; height:2px; background:var(--gold); margin-bottom:24px; animation:expandir 0.6s ease 0.5s both; }
+@keyframes expandir { from{width:0;opacity:0} to{width:40px;opacity:1} }
+.p0-top { font-family:'Bebas Neue',sans-serif; font-size:42px; line-height:1.0; text-align:center; color:#fff; letter-spacing:2px; margin-bottom:12px; animation:fadeUp 0.8s ease 0.8s both; }
+.p0-main { font-family:'Bebas Neue',sans-serif; font-size:76px; line-height:0.9; text-align:center; color:var(--lime); letter-spacing:1px; margin-bottom:40px; animation:fadeUp 0.8s ease 1.0s both; }
+.p0-vol { display:flex; align-items:center; gap:10px; background:rgba(212,168,67,0.08); border:1px solid rgba(212,168,67,0.4); border-radius:100px; padding:12px 24px; margin-bottom:24px; animation:fadeUp 0.8s ease 1.2s both,pulsar 2s infinite 2s; }
+@keyframes pulsar { 0%,100%{border-color:rgba(212,168,67,0.4);box-shadow:0 0 0 0 rgba(212,168,67,0.2)} 50%{border-color:rgba(212,168,67,0.8);box-shadow:0 0 0 8px rgba(212,168,67,0)} }
+.p0-vol .ico { font-size:22px; }
+.p0-vol .txt { color:var(--gold); font-size:14px; font-weight:700; letter-spacing:2px; text-transform:uppercase; }
+.p0-btn { position:relative; background:var(--gold); color:var(--black); font-family:'Inter',sans-serif; font-weight:900; font-size:14px; letter-spacing:2px; text-transform:uppercase; padding:20px 0; width:100%; border:none; border-radius:4px; cursor:pointer; animation:fadeUp 0.8s ease 1.4s both; overflow:hidden; box-shadow:0 0 30px rgba(212,168,67,0.3); }
+.p0-btn::after { content:''; position:absolute; top:0; left:-100%; width:100%; height:100%; background:linear-gradient(90deg,transparent,rgba(255,255,255,0.25),transparent); animation:shimmer 3s infinite 2s; }
+@keyframes shimmer { 0%{left:-100%} 100%{left:100%} }
+.p0-num { position:absolute; bottom:20px; right:20px; font-family:'Bebas Neue',sans-serif; font-size:140px; color:rgba(255,255,255,0.015); line-height:1; pointer-events:none; }
+@keyframes fadeUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+
+/* P1 VIDEO 5 SEG */
+#p1 { padding:0; background:#000; }
+#p1 video { position:absolute; top:0; left:0; width:100%; height:100%; object-fit:cover; }
+
+/* P2 VIDEO 1 */
+#p2 { padding:0; background:#000; }
+.vid-wrap { position:absolute; top:0; left:0; width:100%; height:100%; }
+.vid-wrap video { position:absolute; top:0; left:0; width:100%; height:100%; object-fit:cover; }
+.vid-ov { position:absolute; bottom:0; left:0; right:0; padding:80px 24px 40px; background:linear-gradient(transparent,rgba(0,0,0,0.95)); display:none; flex-direction:column; align-items:center; gap:12px; z-index:10; }
+.vid-ov.visible { display:flex; }
+.vid-txt { color:var(--lime); font-size:14px; font-weight:600; text-align:center; animation:blink 2s infinite; }
+.vid-btn { background:var(--lime); color:var(--black); font-weight:900; font-size:14px; letter-spacing:2px; text-transform:uppercase; padding:18px 0; width:90%; max-width:340px; border:none; border-radius:4px; cursor:pointer; }
+
+/* P3 DISPUESTO */
+#p3 { overflow:hidden; }
+#p3::before { content:''; position:absolute; top:0; left:0; width:100%; height:100%; background:radial-gradient(ellipse at 50% 40%,rgba(168,230,61,0.04) 0%,transparent 60%); pointer-events:none; }
+
+/* P4 NOTIF */
+#p4 { background:#000; }
+#p4::before { content:''; position:absolute; top:0; left:0; width:100%; height:100%; background:radial-gradient(ellipse at 50% 30%,rgba(37,211,102,0.04) 0%,transparent 60%); pointer-events:none; }
+.notif-wrap { position:relative; z-index:2; width:90%; max-width:380px; display:flex; flex-direction:column; align-items:center; }
+.nav-big { width:90px; height:90px; border-radius:50%; border:3px solid var(--lime); object-fit:cover; margin-bottom:14px; animation:gloAvt 2s infinite; }
+@keyframes gloAvt { 0%,100%{box-shadow:0 0 20px rgba(168,230,61,0.2)} 50%{box-shadow:0 0 40px rgba(168,230,61,0.4)} }
+.nav-nombre { color:#fff; font-size:18px; font-weight:700; margin-bottom:4px; }
+.nav-estado { color:var(--lime); font-size:12px; letter-spacing:1px; margin-bottom:28px; }
+.notif-card { background:#111; border-radius:16px; padding:14px 16px; display:flex; align-items:center; gap:12px; width:100%; border:1px solid #1a1a1a; margin-bottom:20px; animation:bajar 0.6s ease; }
+@keyframes bajar { from{transform:translateY(-40px);opacity:0} to{transform:translateY(0);opacity:1} }
+.ni-wa { width:40px; height:40px; border-radius:10px; background:var(--green); display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+.ni-wa svg { width:22px; height:22px; fill:#fff; }
+.ni-c { flex:1; }
+.ni-app { color:#555; font-size:10px; margin-bottom:1px; }
+.ni-nom { color:#fff; font-size:13px; font-weight:700; margin-bottom:2px; }
+.ni-msg { color:#888; font-size:12px; }
+.notif-q { text-align:center; width:100%; }
+.notif-q p { color:#777; font-size:14px; margin-bottom:18px; line-height:1.6; }
+.nbtns { display:flex; flex-direction:column; gap:10px; width:100%; }
+.nbtn-si { background:var(--green); color:#000; font-weight:900; font-size:14px; padding:18px 0; width:100%; border:none; border-radius:60px; cursor:pointer; box-shadow:0 4px 20px rgba(37,211,102,0.3); }
+.nbtn-no { background:transparent; border:1px solid #222; color:#444; font-size:13px; padding:14px 0; width:100%; border-radius:60px; cursor:pointer; font-family:'Inter',sans-serif; }
+
+/* P5 CHAT */
+#p5 { background:#0a0a0a; justify-content:flex-start; padding:0; }
+.wa-hdr { width:100%; background:#111; padding:12px 16px; display:flex; align-items:center; gap:12px; border-bottom:1px solid #1a1a1a; flex-shrink:0; }
+.wa-av { width:40px; height:40px; border-radius:50%; object-fit:cover; border:2px solid var(--lime); }
+.wa-nm { color:#fff; font-size:15px; font-weight:700; }
+.wa-st { color:var(--lime); font-size:11px; }
+.chat-body { flex:1; width:100%; padding:16px 16px 4px 16px; overflow-y:auto; display:flex; flex-direction:column; gap:8px; }
+.chat-footer { width:100%; padding:6px 16px 12px 16px; background:#0a0a0a; flex-shrink:0; }
+.chat-footer button { background:var(--lime); color:#000; font-weight:900; font-size:14px; letter-spacing:1px; text-transform:uppercase; padding:16px 0; width:100%; border:none; border-radius:60px; cursor:pointer; box-shadow:0 0 20px rgba(168,230,61,0.4); display:none; }
+.chat-footer button.on { display:block; animation:aparecer 0.5s ease; }
+
+.burbuja { display:none; max-width:82%; align-self:flex-start; }
+.burbuja.visible { display:block; animation:aparecer 0.4s ease; }
+@keyframes aparecer { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+.burbuja .msg { background:#1e1e1e; border-radius:2px 16px 16px 16px; padding:10px 14px; color:#ddd; font-size:14px; line-height:1.5; }
+.burbuja .hora { color:#333; font-size:10px; margin-top:3px; padding-left:4px; }
+
+.ab { display:none; align-self:flex-start; max-width:85%; }
+.ab.visible { display:block; animation:aparecer 0.4s ease; }
+.ap { background:#1e1e1e; border-radius:2px 16px 16px 16px; padding:12px 16px; display:flex; align-items:center; gap:12px; cursor:pointer; }
+.pb { width:42px; height:42px; border-radius:50%; background:var(--lime); border:none; display:flex; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0; }
+.pb svg { width:18px; height:18px; fill:#000; }
+.ai { flex:1; }
+.abr { height:3px; background:#333; border-radius:2px; margin-bottom:5px; overflow:hidden; }
+.apr { height:100%; background:var(--lime); width:0%; transition:width 0.1s; }
+.at { color:#555; font-size:11px; }
+.ab .hora { color:#333; font-size:10px; margin-top:3px; padding-left:4px; }
+
+.esc { display:none; align-self:flex-start; padding:10px 14px; background:#1e1e1e; border-radius:2px 16px 16px 16px; }
+.esc.visible { display:block; animation:aparecer 0.3s ease; }
+.dots { display:flex; gap:4px; align-items:center; }
+.dots span { width:6px; height:6px; background:#444; border-radius:50%; animation:db 1.4s infinite; }
+.dots span:nth-child(2){animation-delay:0.2s}
+.dots span:nth-child(3){animation-delay:0.4s}
+@keyframes db { 0%,60%,100%{transform:translateY(0)} 30%{transform:translateY(-6px)} }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+</style>
+</head>
+<body>
+
+<!-- SONIDOS DEL SISTEMA -->
+<audio id="sndWhoosh" preload="auto">
+  <source src="https://assets.mixkit.co/active_storage/sfx/2571/2571-preview.mp3" type="audio/mpeg">
+</audio>
+<audio id="sndPing" preload="auto">
+  <source src="https://assets.mixkit.co/active_storage/sfx/2354/2354-preview.mp3" type="audio/mpeg">
+</audio>
+<audio id="sndMsg" preload="auto">
+  <source src="https://assets.mixkit.co/active_storage/sfx/1/1-preview.mp3" type="audio/mpeg">
+</audio>
+
+<!-- P0 ENTRADA -->
+<div class="p on" id="p0">
+  <div class="p0-num">7</div>
+  <div class="p0-inner">
+    <img class="p0-logo"
+      src="https://static.wixstatic.com/media/65b318_401f56e7ba754c898c7c38a9f4dd129c~mv2.png/v1/crop/x_289,y_320,w_973,h_353/fill/w_564,h_204,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/65b318_401f56e7ba754c898c7c38a9f4dd129c~mv2.png"
+      alt="AUREX" onerror="this.style.display='none'">
+    <div class="p0-linea"></div>
+    <div class="p0-top">HAY MOMENTOS<br>QUE DEFINEN</div>
+    <div class="p0-main">ESTE ES<br>UNO DE<br>ELLOS.</div>
+    <div class="p0-vol">
+      <span class="ico">🔊</span>
+      <span class="txt">Sube el volumen</span>
+    </div>
+    <button class="p0-btn" onclick="ir('p1')">ENTRAR A LA EXPERIENCIA →</button>
+  </div>
+</div>
+
+<!-- P1 VIDEO 5 SEG — va directo a P2 video 1 -->
+<div class="p" id="p1">
+  <video id="v5" playsinline webkit-playsinline preload="auto">
+    <source src="https://video.wixstatic.com/video/65b318_819c279c41c74e88a9fa8d15318948be/1080p/mp4/file.mp4" type="video/mp4">
+  </video>
+</div>
+
+
+<!-- P1B ESTAS LISTO -->
+<div class="p" id="p1b">
+  <div style="position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;padding:0 28px;width:100%;max-width:420px;text-align:center;">
+    <div style="background:rgba(168,230,61,0.08);border:1px solid rgba(168,230,61,0.2);color:var(--lime);font-size:10px;font-weight:700;letter-spacing:3px;text-transform:uppercase;padding:6px 16px;border-radius:100px;margin-bottom:32px;">Un momento antes de continuar</div>
+    <div style="font-family:'Bebas Neue',sans-serif;font-size:58px;line-height:1.0;color:#fff;letter-spacing:2px;margin-bottom:20px;">¿ESTÁS<br><span style="color:var(--lime);">LISTO</span><br>PARA VER?</div>
+    <div style="color:#bbb;font-size:17px;margin-bottom:48px;line-height:1.7;">Lo que sigue no es para todos.<br>Es para quien está buscando<br>algo genuinamente diferente.</div>
+    <button onclick="ir('p2')" style="background:var(--lime);color:#000;font-family:'Inter',sans-serif;font-weight:900;font-size:14px;letter-spacing:2px;text-transform:uppercase;padding:20px 0;width:100%;border:none;border-radius:4px;cursor:pointer;margin-bottom:14px;box-shadow:0 0 25px rgba(168,230,61,0.3);">SÍ — ESTOY LISTO →</button>
+    <button onclick="ir('p0')" style="background:transparent;border:none;color:#444;font-size:13px;cursor:pointer;padding:8px;font-family:'Inter',sans-serif;">Regresar al inicio</button>
+  </div>
+</div>
+<!-- P2 VIDEO 1 -->
+<div class="p" id="p2">
+  <div class="vid-wrap">
+    <video id="vid1" playsinline webkit-playsinline preload="auto">
+      <source src="https://video.wixstatic.com/video/65b318_cb4798198f0c42f1bf04fbf5c4c0aa87/1080p/mp4/file.mp4" type="video/mp4">
+    </video>
+  </div>
+  <div class="vid-ov" id="p2ov"></div>
+</div>
+
+<!-- P3 DISPUESTO A CAMBIAR -->
+<div class="p" id="p3">
+  <div style="position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;padding:0 28px;width:100%;max-width:420px;text-align:center;">
+    <div style="width:40px;height:2px;background:var(--gold);margin-bottom:32px;"></div>
+    <div style="font-family:'Bebas Neue',sans-serif;font-size:64px;line-height:0.95;color:#fff;letter-spacing:2px;margin-bottom:16px;">
+      ¿ESTÁS<br><span style="color:var(--lime);">DISPUESTO</span><br>A CAMBIAR?
+    </div>
+    <div style="color:#666;font-size:16px;line-height:1.7;margin-bottom:48px;">
+      Lo que sigue requiere<br>una sola cosa de tu parte.<br>Estar abierto.
+    </div>
+    <button onclick="ir('p4')"
+      style="background:var(--lime);color:#000;font-family:'Inter',sans-serif;font-weight:900;font-size:15px;letter-spacing:2px;text-transform:uppercase;padding:20px 0;width:100%;border:none;border-radius:4px;cursor:pointer;box-shadow:0 0 25px rgba(168,230,61,0.4);margin-bottom:16px;">
+      SÍ — ESTOY DISPUESTO →
+    </button>
+    <button onclick="ir('p0')"
+      style="background:transparent;border:none;color:#333;font-size:13px;cursor:pointer;font-family:'Inter',sans-serif;padding:8px;">
+      Necesito más tiempo
+    </button>
+  </div>
+</div>
+
+<!-- P4 NOTIFICACION -->
+<div class="p" id="p4">
+  <div class="notif-wrap">
+    <img class="nav-big"
+      src="https://static.wixstatic.com/media/65b318_b605f32a38894653a151bb1d571bd37e~mv2.png"
+      alt="AUREX"
+      onerror="this.src='https://static.wixstatic.com/media/65b318_401f56e7ba754c898c7c38a9f4dd129c~mv2.png'">
+    <div class="nav-nombre">AUREX</div>
+    <div class="nav-estado">● agente en línea</div>
+    <div class="notif-card">
+      <div class="ni-wa">
+        <svg viewBox="0 0 24 24">
+          <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
+          <path d="M12 0C5.373 0 0 5.373 0 12c0 2.125.553 4.12 1.523 5.853L.057 23.428a.75.75 0 00.921.921l5.653-1.48A11.953 11.953 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.75a9.75 9.75 0 110-19.5 9.75 9.75 0 010 19.5z"/>
+        </svg>
+      </div>
+      <div class="ni-c">
+        <div class="ni-app">WhatsApp • ahora</div>
+        <div class="ni-nom">AUREX — Agente en línea</div>
+        <div class="ni-msg">Tengo algo importante que contarte... 🍋</div>
+      </div>
+    </div>
+    <div class="notif-q">
+      <p>¿Quieres hablar<br>con nuestro agente AUREX?</p>
+      <div class="nbtns">
+        <button class="nbtn-si" onclick="ir('p5')">💬 QUIERO SEGUIR LA EXPERIENCIA</button>
+        <button class="nbtn-no" onclick="ir('p0')">Ahora no</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- P5 CHAT -->
+<div class="p" id="p5">
+  <div class="wa-hdr">
+    <img class="wa-av"
+      src="https://static.wixstatic.com/media/65b318_b605f32a38894653a151bb1d571bd37e~mv2.png"
+      alt="AUREX"
+      onerror="this.src='https://static.wixstatic.com/media/65b318_401f56e7ba754c898c7c38a9f4dd129c~mv2.png'">
+    <div>
+      <div class="wa-nm">AUREX</div>
+      <div class="wa-st">● agente en línea</div>
+    </div>
+  </div>
+
+  <div class="chat-body" id="chatBody">
+    <div class="esc" id="esc1">
+      <div class="dots"><span></span><span></span><span></span></div>
+    </div>
+    <div class="burbuja" id="b1">
+      <div class="msg">Bienvenido a nuestro agente AUREX 🍋<br>Debes escuchar esto...</div>
+      <div class="hora">ahora</div>
+    </div>
+    <div class="ab" id="a1">
+      <div class="ap" onclick="playAudio(1)">
+        <button class="pb" id="pb1"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></button>
+        <div class="ai">
+          <div class="abr"><div class="apr" id="pr1"></div></div>
+          <div class="at" id="t1">0:29</div>
+        </div>
+      </div>
+      <div class="hora">ahora</div>
+    </div>
+    <div class="esc" id="esc2">
+      <div class="dots"><span></span><span></span><span></span></div>
+    </div>
+    <div class="burbuja" id="b2">
+      <div class="msg">Esto que te diré es muy importante. ⚡</div>
+      <div class="hora">ahora</div>
+    </div>
+    <div class="ab" id="a2">
+      <div class="ap" onclick="playAudio(2)">
+        <button class="pb" id="pb2"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></button>
+        <div class="ai">
+          <div class="abr"><div class="apr" id="pr2"></div></div>
+          <div class="at" id="t2">0:47</div>
+        </div>
+      </div>
+      <div class="hora">ahora</div>
+    </div>
+    <div class="esc" id="esc3">
+      <div class="dots"><span></span><span></span><span></span></div>
+    </div>
+    <div class="ab" id="a3">
+      <div class="ap" onclick="playAudio(3)">
+        <button class="pb" id="pb3"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></button>
+        <div class="ai">
+          <div class="abr"><div class="apr" id="pr3"></div></div>
+          <div class="at" id="t3">1:07</div>
+        </div>
+      </div>
+      <div class="hora">ahora</div>
+    </div>
+    <div class="burbuja" id="b4">
+      <div class="msg">¿Ya tiene sentido todo esto? 🍋</div>
+      <div class="hora">ahora</div>
+    </div>
+  </div>
+
+  <div class="chat-footer">
+    <button id="btnSig" onclick="ir('siguiente')">VER LO QUE ENCONTRÉ →</button>
+  </div>
+</div>
+
+<!-- SIGUIENTE -->
+<!-- PUENTE — NO POR CASUALIDAD -->
+<div class="p" id="siguiente">
+  <div style="position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;padding:0 32px;width:100%;max-width:420px;text-align:center;overflow:hidden;">
+
+    <!-- Destellos de fondo -->
+    <div style="position:absolute;top:-100px;left:50%;transform:translateX(-50%);width:300px;height:300px;background:radial-gradient(ellipse,rgba(212,168,67,0.08) 0%,transparent 70%);pointer-events:none;"></div>
+
+    <!-- Línea dorada -->
+    <div style="width:40px;height:2px;background:var(--gold);margin-bottom:36px;"></div>
+
+    <!-- Eyebrow -->
+    <div style="color:var(--gold);font-size:11px;font-weight:700;letter-spacing:4px;text-transform:uppercase;margin-bottom:20px;">
+      Un momento
+    </div>
+
+    <!-- Headline grande -->
+    <div style="font-family:'Bebas Neue',sans-serif;font-size:68px;line-height:0.9;color:#fff;letter-spacing:2px;margin-bottom:16px;">
+      NO<br>LLEGASTE<br>AQUÍ<br><span style="color:var(--gold);">POR</span><br><span style="color:var(--gold);">CASUALIDAD.</span>
+    </div>
+
+    <!-- Subtítulo -->
+    <div style="color:#666;font-size:15px;line-height:1.7;margin-bottom:52px;max-width:280px;">
+      Lo que sigue confirma<br>por qué estás en el<br>momento correcto.
+    </div>
+
+    <!-- Botón dorado -->
+    <button onclick="ir('prueba')"
+      style="position:relative;background:var(--gold);color:#000;font-family:'Inter',sans-serif;font-weight:900;font-size:15px;letter-spacing:2px;text-transform:uppercase;padding:20px 0;width:100%;border:none;border-radius:4px;cursor:pointer;overflow:hidden;box-shadow:0 0 30px rgba(212,168,67,0.4);">
+      ¿ES REALMENTE CIERTO? →
+    </button>
+
+  </div>
+</div>
+
+<!-- PRUEBA SOCIAL -->
+<div class="p" id="prueba" style="background:#000;overflow:hidden;">
+  <div style="position:absolute;top:-50%;left:-50%;width:200%;height:200%;background:radial-gradient(ellipse at 50% 50%,rgba(168,230,61,0.04) 0%,transparent 60%);pointer-events:none;"></div>
+  <div style="position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;padding:0 28px;width:100%;max-width:420px;text-align:center;">
+    <div style="color:#555;font-size:11px;letter-spacing:3px;text-transform:uppercase;margin-bottom:48px;">Esto no es una promesa</div>
+    <div class="cnt-item" id="c1" style="margin-bottom:32px;opacity:0;transition:opacity 0.6s;">
+      <div style="color:var(--lime);font-family:'Bebas Neue',sans-serif;font-size:60px;line-height:1;" id="n1">0</div>
+      <div style="color:#555;font-size:13px;letter-spacing:1px;">personas activas en el ecosistema</div>
+    </div>
+    <div class="cnt-item" id="c2" style="margin-bottom:32px;opacity:0;transition:opacity 0.6s;">
+      <div style="color:var(--gold);font-family:'Bebas Neue',sans-serif;font-size:60px;line-height:1;" id="n2">0</div>
+      <div style="color:#555;font-size:13px;letter-spacing:1px;">años operando en Europa</div>
+    </div>
+    <div class="cnt-item" id="c3" style="margin-bottom:40px;opacity:0;transition:opacity 0.6s;">
+      <div style="color:var(--lime);font-family:'Bebas Neue',sans-serif;font-size:60px;line-height:1;" id="n3">0</div>
+      <div style="color:#555;font-size:13px;letter-spacing:1px;">posiciones para tu primer resultado</div>
+    </div>
+    <div id="psFrase" style="color:#fff;font-size:18px;font-weight:700;margin-bottom:36px;opacity:0;transition:opacity 0.6s;line-height:1.4;">
+      "Es una trayectoria."
+    </div>
+    <button id="btnPrueba" onclick="ir('llamada')"
+      style="display:none;background:var(--lime);color:#000;font-family:'Inter',sans-serif;font-weight:900;font-size:14px;letter-spacing:2px;text-transform:uppercase;padding:20px 0;width:100%;border:none;border-radius:4px;cursor:pointer;box-shadow:0 0 25px rgba(168,230,61,0.4);">
+      VER CÓMO FUNCIONA →
+    </button>
+  </div>
+</div>
+
+<!-- LLAMADA ENTRANTE -->
+<div class="p" id="llamada" style="background:linear-gradient(160deg,#061206 0%,#000 60%);">
+  <audio id="ringSound" loop preload="auto">
+    <source src="https://assets.mixkit.co/active_storage/sfx/2002/2002-preview.mp3" type="audio/mpeg">
+    <source src="https://assets.mixkit.co/active_storage/sfx/214/214-preview.mp3" type="audio/mpeg">
+  </audio>
+  <div style="color:#555;font-size:11px;letter-spacing:3px;text-transform:uppercase;margin-bottom:40px;">📱 Llamada entrante</div>
+  <img src="https://static.wixstatic.com/media/65b318_b605f32a38894653a151bb1d571bd37e~mv2.png"
+    style="width:130px;height:130px;border-radius:50%;border:3px solid var(--lime);object-fit:cover;margin-bottom:18px;animation:gloAvt 2s infinite;"
+    onerror="this.src='https://static.wixstatic.com/media/65b318_401f56e7ba754c898c7c38a9f4dd129c~mv2.png'">
+  <div style="color:#fff;font-size:20px;font-weight:700;text-align:center;margin-bottom:8px;">AUREX — Información exclusiva</div>
+  <div style="color:var(--lime);font-size:13px;letter-spacing:2px;margin-bottom:50px;animation:blink 1.5s infinite;">● LLAMADA ENTRANTE...</div>
+  <button onclick="contestarLlamada()"
+    style="width:80px;height:80px;border-radius:50%;background:var(--green);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;animation:ringBtn 1.2s infinite;margin-bottom:12px;">
+    <svg viewBox="0 0 24 24" style="width:38px;height:38px;fill:#fff;">
+      <path d="M6.6 10.8c1.4 2.8 3.8 5.1 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1-9.4 0-17-7.6-17-17 0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1L6.6 10.8z"/>
+    </svg>
+  </button>
+  <div style="color:#555;font-size:12px;letter-spacing:2px;text-transform:uppercase;">toca para contestar</div>
+</div>
+
+<!-- VIDEO 2 — COMO FUNCIONA -->
+<div class="p" id="vid2" style="padding:0;background:#000;">
+  <div style="position:absolute;top:0;left:0;width:100%;height:100%;" id="vid2wrap"></div>
+  <div style="position:absolute;bottom:0;left:0;right:0;padding:80px 24px 40px;background:linear-gradient(transparent,rgba(0,0,0,0.95));display:none;flex-direction:column;align-items:center;gap:12px;z-index:10;" id="vid2ov">
+    <button onclick="ir('encuesta')"
+      style="background:var(--lime);color:#000;font-weight:900;font-size:14px;letter-spacing:2px;text-transform:uppercase;padding:18px 0;width:90%;max-width:340px;border:none;border-radius:4px;cursor:pointer;">
+      CONTINUAR →
+    </button>
+  </div>
+</div>
+
+<!-- ENCUESTA -->
+<div class="p" id="encuesta" style="overflow:hidden;">
+  <div style="position:absolute;top:0;left:0;width:100%;height:100%;background:radial-gradient(ellipse at 50% 30%,rgba(168,230,61,0.04) 0%,transparent 60%);pointer-events:none;"></div>
+  <div style="position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;padding:0 28px;width:100%;max-width:420px;text-align:center;">
+    <div style="color:var(--lime);font-size:10px;font-weight:700;letter-spacing:3px;text-transform:uppercase;padding:6px 16px;border:1px solid rgba(168,230,61,0.2);border-radius:100px;margin-bottom:28px;">Una pregunta directa</div>
+    <div style="font-family:'Bebas Neue',sans-serif;font-size:48px;line-height:1.0;color:#fff;letter-spacing:2px;margin-bottom:32px;">
+      ¿LISTO PARA<br><span style="color:var(--lime);">TOMAR</span><br>ACCIÓN?
+    </div>
+    <div style="display:flex;flex-direction:column;gap:12px;width:100%;">
+      <button onclick="respuestaEncuesta('listo')"
+        style="background:transparent;border:1px solid #333;color:#888;font-size:15px;padding:18px 20px;border-radius:60px;cursor:pointer;font-family:'Inter',sans-serif;text-align:left;">
+        ✅ Sí — estoy listo para actuar hoy
+      </button>
+      <button onclick="respuestaEncuesta('info')"
+        style="background:transparent;border:1px solid #333;color:#888;font-size:15px;padding:18px 20px;border-radius:60px;cursor:pointer;font-family:'Inter',sans-serif;text-align:left;">
+        🤔 Quiero ver un poco más de información
+      </button>
+      <button onclick="respuestaEncuesta('dudas')"
+        style="background:transparent;border:1px solid #333;color:#888;font-size:15px;padding:18px 20px;border-radius:60px;cursor:pointer;font-family:'Inter',sans-serif;text-align:left;">
+        💬 Tengo dudas — necesito hablar con alguien
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- VIDEO 3 — CIERRE DUDAS -->
+<div class="p" id="vid3" style="padding:0;background:#000;">
+  <div style="position:absolute;top:0;left:0;width:100%;height:100%;" id="vid3wrap"></div>
+  <div style="position:absolute;bottom:0;left:0;right:0;padding:80px 24px 40px;background:linear-gradient(transparent,rgba(0,0,0,0.95));display:none;flex-direction:column;align-items:center;gap:12px;z-index:10;" id="vid3ov">
+    <button onclick="ir('cta')"
+      style="background:var(--lime);color:#000;font-weight:900;font-size:14px;letter-spacing:2px;text-transform:uppercase;padding:18px 0;width:90%;max-width:340px;border:none;border-radius:4px;cursor:pointer;">
+      ESTOY LISTO →
+    </button>
+  </div>
+</div>
+
+<!-- CTA FINAL -->
+<div class="p" id="cta" style="background:#000;overflow:hidden;">
+  <div style="position:absolute;top:-50%;left:-50%;width:200%;height:200%;background:radial-gradient(ellipse at 20% 50%,rgba(168,230,61,0.04) 0%,transparent 50%),radial-gradient(ellipse at 80% 20%,rgba(212,168,67,0.06) 0%,transparent 40%);animation:rotar 20s linear infinite;pointer-events:none;"></div>
+  <div style="position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;padding:32px 24px;width:100%;max-width:420px;text-align:center;overflow-y:auto;max-height:100vh;">
+    <img src="https://static.wixstatic.com/media/65b318_401f56e7ba754c898c7c38a9f4dd129c~mv2.png/v1/crop/x_289,y_320,w_973,h_353/fill/w_564,h_204,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/65b318_401f56e7ba754c898c7c38a9f4dd129c~mv2.png"
+      style="width:140px;margin-bottom:24px;" alt="AUREX">
+    <div style="width:40px;height:2px;background:var(--gold);margin-bottom:24px;"></div>
+    <div style="font-family:'Bebas Neue',sans-serif;font-size:52px;line-height:0.95;color:#fff;letter-spacing:2px;margin-bottom:12px;">
+      ¿ESTÁS LISTO<br>PARA<br><span style="color:var(--lime);">POSICIONARTE</span><br>HOY?
+    </div>
+    <div style="color:#555;font-size:14px;line-height:1.7;margin-bottom:24px;max-width:300px;">
+      Llegaste hasta aquí porque algo en ti sabe que esto es diferente. El momento es ahora.
+    </div>
+    <div style="background:#111;border:1px solid rgba(168,230,61,0.3);border-radius:12px;padding:20px;width:100%;margin-bottom:24px;text-align:left;">
+      <div style="color:var(--lime);font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-bottom:12px;">LO QUE PASA EN EL ZOOM:</div>
+      <div style="color:#ccc;font-size:13px;line-height:2.0;">
+        ✅ Ves el sistema funcionando en vivo<br>
+        ✅ Resolvemos cada duda con hechos<br>
+        ✅ Conoces el equipo real<br>
+        ✅ Decides con información completa
+      </div>
+      <div style="border-top:1px solid #222;margin:14px 0;"></div>
+      <div style="color:var(--gold);font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;">🎁 BONO EXCLUSIVO:</div>
+      <div style="color:#ccc;font-size:13px;line-height:1.6;">
+        Curso "Código Digital"<br>
+        <span style="color:#444;text-decoration:line-through;">Valor: $97 USD</span>
+        <span style="color:var(--lime);font-weight:700;"> GRATIS</span><br>
+        <span style="color:#444;font-size:11px;">Solo por asistir al Zoom</span>
+      </div>
+    </div>
+    <a id="waBtn" href="#" target="_blank"
+      style="display:flex;align-items:center;justify-content:center;gap:10px;background:var(--green);color:#000;font-weight:900;font-size:16px;padding:20px 0;width:100%;border-radius:60px;text-decoration:none;margin-bottom:12px;box-shadow:0 4px 24px rgba(37,211,102,0.35);">
+      📲 AGENDAR MI LUGAR EN EL ZOOM
+    </a>
+    <div style="color:#333;font-size:12px;">
+      Sin compromiso — solo información clara para que tú decidas
+    </div>
+  </div>
+</div>
+
+<script>
+// URLs relativas — funcionan desde Netlify sin CORS
+var AUDIOS = { 1:'A1.mp3', 2:'A2.mp3', 3:'A3.mp3' };
+
+function configurarWA() {
+  var p = new URLSearchParams(window.location.search);
+  var wa = p.get('wa') || '525579444892';
+  var nombre = p.get('nombre') || 'AUREX';
+  var msg = encodeURIComponent('Hola ' + nombre + ', vi la presentación de AUREX y estoy listo para avanzar. ¿Cuándo es la próxima presentación?');
+  var btn = document.getElementById('waBtn');
+  if(btn) btn.href = 'https://wa.me/' + wa + '?text=' + msg;
+}
+window.addEventListener('load', configurarWA);
+
+var audioObj = {};
+var chatOk = false;
+var p2Ok = false;
+
+function mostrar(id) {
+  var el = document.getElementById(id);
+  if (el) {
+    el.classList.add('visible');
+    // Sonido de mensaje si es burbuja o audio
+    if(id.startsWith('b') || id.startsWith('a')) {
+      playSound('sndMsg');
+    }
+    var cb = document.getElementById('chatBody');
+    if (cb) setTimeout(function(){ cb.scrollTop = cb.scrollHeight; }, 50);
+  }
+}
+
+function playSound(snd) {
+  try {
+    var el = document.getElementById(snd);
+    if(el) { el.currentTime = 0; el.volume = 0.5; el.play().catch(function(){}); }
+  } catch(e){}
+}
+
+function ir(id) {
+  // Sonido whoosh en cada transición
+  playSound('sndWhoosh');
+
+  // Fade out pantalla actual
+  document.querySelectorAll('.p.on').forEach(function(el){
+    el.classList.add('saliendo');
+  });
+
+  setTimeout(function(){
+    document.querySelectorAll('.p').forEach(function(el){
+      el.classList.remove('on');
+      el.classList.remove('saliendo');
+    });
+    var next = document.getElementById(id);
+    next.classList.add('on');
+    next.classList.add('entrando');
+    setTimeout(function(){ next.classList.remove('entrando'); }, 400);
+    window.scrollTo(0,0);
+
+  }, 200);
+
+  // Lógica de pantallas (dentro del setTimeout para esperar fade)
+  setTimeout(function(){
+  if (id === 'p1') {
+    var v = document.getElementById('v5');
+    v.currentTime = 0;
+    v.muted = false;
+    v.play().catch(function(){ v.muted=true; v.play(); });
+    // Al terminar va directo a video 1 — SIN pantalla intermedia
+    v.onended = function(){ ir('p1b'); };
+    setTimeout(function(){
+      if(document.getElementById('p1').classList.contains('on')) ir('p1b');
+    }, 10000);
+  }
+
+  if (id === 'p2' && !p2Ok) {
+    var v1 = document.getElementById('vid1');
+    v1.currentTime = 0;
+    v1.play().catch(function(){});
+    // Al terminar el video va directo a p3
+    v1.onended = function(){ ir('p3'); };
+    // Fallback: solo navega si todavia estamos en p2
+    setTimeout(function(){
+      if(document.getElementById('p2').classList.contains('on')) ir('p3');
+    }, 150000);
+    p2Ok = true;
+  }
+
+  if (id === 'p5' && !chatOk) {
+    chatOk = true;
+    iniciarChat();
+  }
+
+  if (id === 'prueba') {
+    animarContadores();
+  }
+
+  if (id === 'llamada') {
+    var ring = document.getElementById('ringSound');
+    if(ring) {
+      try {
+        if(!window.ringCtxCreado) {
+          var ctx = new (window.AudioContext||window.webkitAudioContext)();
+          var src = ctx.createMediaElementSource(ring);
+          var gain = ctx.createGain();
+          gain.gain.value = 3.0;
+          src.connect(gain);
+          gain.connect(ctx.destination);
+          window.ringCtxCreado = true;
+        }
+      } catch(e){}
+      ring.currentTime = 0;
+      ring.volume = 1.0;
+      ring.play().catch(function(){});
+    }
+  } else {
+    var ring2 = document.getElementById('ringSound');
+    if(ring2) { ring2.pause(); ring2.currentTime = 0; }
+  }
+
+  if (id === 'vid2' && !window.vid2Ok) {
+    window.vid2Ok = true;
+    var w2 = document.getElementById('vid2wrap');
+    var f2 = document.createElement('iframe');
+    f2.src = 'https://player.vimeo.com/video/1186779355?autoplay=1&title=0&byline=0&portrait=0&controls=0&dnt=1';
+    f2.allow = 'autoplay; fullscreen; picture-in-picture';
+    f2.allowFullscreen = true;
+    f2.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;border:none;';
+    w2.appendChild(f2);
+    // Botón aparece a los 130 seg (2:10 aprox)
+    setTimeout(function(){
+      if(document.getElementById('vid2').classList.contains('on'))
+        document.getElementById('vid2ov').style.display = 'flex';
+    }, 130000);
+  }
+
+  if (id === 'vid3' && !window.vid3Ok) {
+    window.vid3Ok = true;
+    var w3 = document.getElementById('vid3wrap');
+    var f3 = document.createElement('iframe');
+    f3.src = 'https://player.vimeo.com/video/1186779807?autoplay=1&title=0&byline=0&portrait=0&controls=0&dnt=1';
+    f3.allow = 'autoplay; fullscreen; picture-in-picture';
+    f3.allowFullscreen = true;
+    f3.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;border:none;';
+    w3.appendChild(f3);
+    // Botón aparece a los 130 seg
+    setTimeout(function(){
+      if(document.getElementById('vid3').classList.contains('on'))
+        document.getElementById('vid3ov').style.display = 'flex';
+    }, 130000);
+  }
+
+  }, 200); // fin setTimeout lógica
+}
+
+function contestarLlamada() {
+  var ring = document.getElementById('ringSound');
+  if(ring) { ring.pause(); ring.currentTime = 0; }
+  ir('vid2');
+}
+
+function animarContadores() {
+  var items = [
+    {id:'n1', target:2000000, label:'c1', tiempo:800},
+    {id:'n2', target:7, label:'c2', tiempo:2000},
+    {id:'n3', target:3, label:'c3', tiempo:3200}
+  ];
+  items.forEach(function(item){
+    setTimeout(function(){
+      document.getElementById(item.label).style.opacity = '1';
+      var el = document.getElementById(item.id);
+      var start = 0;
+      var dur = 1000;
+      var inc = item.target / 60;
+      var cur = 0;
+      var timer = setInterval(function(){
+        cur += inc;
+        if(cur >= item.target) { cur = item.target; clearInterval(timer); }
+        if(item.target >= 1000000) {
+          el.textContent = (cur/1000000).toFixed(1) + 'M+';
+        } else {
+          el.textContent = Math.floor(cur);
+        }
+      }, dur/60);
+    }, item.tiempo);
+  });
+  setTimeout(function(){
+    document.getElementById('psFrase').style.opacity = '1';
+  }, 4500);
+  setTimeout(function(){
+    document.getElementById('btnPrueba').style.display = 'block';
+  }, 5200);
+}
+
+function respuestaEncuesta(tipo) {
+  if(tipo === 'listo') {
+    ir('cta');
+  } else {
+    ir('vid3');
+  }
+}
+
+function iniciarChat() {
+  setTimeout(function(){ mostrar('esc1'); }, 500);
+  setTimeout(function(){
+    document.getElementById('esc1').classList.remove('visible');
+    mostrar('b1');
+  }, 1800);
+  setTimeout(function(){ mostrar('a1'); }, 2600);
+}
+
+function mostrarSiguiente(num) {
+  if (num === 1) {
+    setTimeout(function(){ mostrar('esc2'); }, 500);
+    setTimeout(function(){
+      document.getElementById('esc2').classList.remove('visible');
+      mostrar('b2');
+    }, 1600);
+    setTimeout(function(){ mostrar('a2'); }, 2400);
+  }
+  if (num === 2) {
+    setTimeout(function(){ mostrar('esc3'); }, 500);
+    setTimeout(function(){
+      document.getElementById('esc3').classList.remove('visible');
+      mostrar('a3');
+    }, 1600);
+  }
+  if (num === 3) {
+    setTimeout(function(){ mostrar('b4'); }, 700);
+    setTimeout(function(){
+      document.getElementById('btnSig').classList.add('on');
+      var cb = document.getElementById('chatBody');
+      if(cb) cb.scrollTop = cb.scrollHeight;
+    }, 1600);
+  }
+}
+
+function playAudio(num) {
+  var url = AUDIOS[num];
+  if (!url) return;
+
+  if (!audioObj[num]) {
+    audioObj[num] = new Audio(url);
+    audioObj[num].preload = 'auto';
+  }
+
+  var audio = audioObj[num];
+  var pr = document.getElementById('pr' + num);
+  var t = document.getElementById('t' + num);
+  var pb = document.getElementById('pb' + num);
+
+  // Pausar otros
+  [1,2,3].forEach(function(k){
+    if (k !== num && audioObj[k] && !audioObj[k].paused) {
+      audioObj[k].pause();
+      var b = document.getElementById('pb'+k);
+      if(b) b.innerHTML = '<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>';
+    }
+  });
+
+  if (audio.paused) {
+    var promise = audio.play();
+    if (promise !== undefined) {
+      promise.then(function(){
+        pb.innerHTML = '<svg viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>';
+      }).catch(function(e){
+        console.log('Audio error:', e);
+      });
+    }
+
+    audio.ontimeupdate = function(){
+      if (!audio.duration) return;
+      var pct = (audio.currentTime / audio.duration) * 100;
+      if(pr) pr.style.width = pct + '%';
+      var rem = audio.duration - audio.currentTime;
+      if(t && !isNaN(rem)){
+        var m = Math.floor(rem/60);
+        var s = Math.floor(rem%60);
+        t.textContent = m + ':' + (s<10?'0':'') + s;
+      }
+    };
+
+    audio.onended = function(){
+      pb.innerHTML = '<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>';
+      mostrarSiguiente(num);
+    };
+  } else {
+    audio.pause();
+    pb.innerHTML = '<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>';
+  }
+}
+</script>
+</body>
+</html>
